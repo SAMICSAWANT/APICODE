@@ -4,12 +4,12 @@ import cvzone
 import numpy as np
 from collections import defaultdict
 from database import CarInfo
-# from ParkingSpacePicker import temps
+from ParkingSpacePicker import temps
 import json
 # Video feed
 print("main")
 
-cap = cv2.VideoCapture('carPark.mp4')
+cap = cv2.VideoCapture('C:/Users/atharva/Desktop/finalprakapp/Pyt/carPark.mp4')
 # cap = cv2.VideoCapture('carPark_Reverse.mp4')
 
 with open('CarParkPos', 'rb') as f:
