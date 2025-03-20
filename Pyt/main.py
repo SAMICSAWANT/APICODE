@@ -3,13 +3,19 @@ import pickle
 import cvzone
 import numpy as np
 from collections import defaultdict
-from database import CarInfo
+# from database import CarInfo
 from ParkingSpacePicker import temps
 import json
+import os
 # Video feed
 print("main")
 
-cap = cv2.VideoCapture('C:/Users/atharva/Desktop/finalprakapp/Pyt/carPark.mp4')
+# Use absolute path to the video file
+video_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'carPark.mp4')
+cap = cv2.VideoCapture(video_path)
+print(f"Video path: {video_path}")
+print(f"Video opened successfully: {cap.isOpened()}")
+
 # cap = cv2.VideoCapture('carPark_Reverse.mp4')
 
 with open('CarParkPos', 'rb') as f:
@@ -52,20 +58,19 @@ def checkParkingSpace(imgPro):
             if temps[pos] not in counter:
                 counter.add(temps[pos])
                 
-                    
-                                #    print(counter, ":Green")
-                CarInfo.drop()
-                strCounter = []
-                bools = []
-                for i in range(69):
-                    if(i in counter):
-                        bools.append(True)
-                        strCounter.append(str(i))
-                    else:
-                        bools.append(False)
-                        strCounter.append(str(i))
-                di = dict(zip(strCounter, bools))
-                CarInfo.insert_one(di)
+                # Commenting out database operations
+                # CarInfo.drop()
+                # strCounter = []
+                # bools = []
+                # for i in range(69):
+                #     if(i in counter):
+                #         bools.append(True)
+                #         strCounter.append(str(i))
+                #     else:
+                #         bools.append(False)
+                #         strCounter.append(str(i))
+                # di = dict(zip(strCounter, bools))
+                # CarInfo.insert_one(di)
 
         else:
             color = (0, 0, 255)  # RED
@@ -75,18 +80,19 @@ def checkParkingSpace(imgPro):
             if temps[pos] in counter:   
                 counter.remove(temps[pos])
 
-                CarInfo.drop()
-                strCounter = []
-                bools = []
-                for i in range(69):
-                    if(i in counter):
-                        bools.append(True)
-                        strCounter.append(str(i))
-                    else:
-                        bools.append(False)
-                        strCounter.append(str(i))
-                di = dict(zip(strCounter, bools))
-                CarInfo.insert_one(di)
+                # Commenting out database operations
+                # CarInfo.drop()
+                # strCounter = []
+                # bools = []
+                # for i in range(69):
+                #     if(i in counter):
+                #         bools.append(True)
+                #         strCounter.append(str(i))
+                #     else:
+                #         bools.append(False)
+                #         strCounter.append(str(i))
+                # di = dict(zip(strCounter, bools))
+                # CarInfo.insert_one(di)
 
         ID = str(temps[pos])
         cv2.rectangle(img, pos, (pos[0] + width,
