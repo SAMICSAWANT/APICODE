@@ -12,9 +12,16 @@ print("main")
 
 # Use absolute path to the video file
 video_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'carPark.mp4')
-cap = cv2.VideoCapture(video_path)
-print(f"Video path: {video_path}")
-print(f"Video opened successfully: {cap.isOpened()}")
+
+# Set to False to use the uploaded video file instead of camera
+use_camera = False  # Changed to False to use the uploaded video project
+if use_camera:
+    cap = cv2.VideoCapture(0)  # Use default camera (change index if needed)
+    print("Using live camera feed")
+else:
+    cap = cv2.VideoCapture(video_path)
+    print(f"Video path: {video_path}")
+    print(f"Video opened successfully: {cap.isOpened()}")
 
 # cap = cv2.VideoCapture('carPark_Reverse.mp4')
 
@@ -115,9 +122,18 @@ def checkParkingSpace(imgPro):
 
 while True:
     print("inside while")
-    if cap.get(cv2.CAP_PROP_POS_FRAMES) == cap.get(cv2.CAP_PROP_FRAME_COUNT):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+    if not use_camera:  # Only reset frame position for video files
+        if cap.get(cv2.CAP_PROP_POS_FRAMES) == cap.get(cv2.CAP_PROP_FRAME_COUNT):
+            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+    
     success, img = cap.read()
+    if not success:
+        print("Failed to read frame")
+        break
+        
+    # Create copies for different displays
+    original_img = img.copy()
+    
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     imgBlur = cv2.GaussianBlur(imgGray, (3, 3), 1)
     imgThreshold = cv2.adaptiveThreshold(
@@ -129,13 +145,23 @@ while True:
 
     checkParkingSpace(imgDilate)
 
-    cv2.imshow("Image", img)
-    # cv2.imshow("Image", imgGray)
-    # cv2.imshow("ImageBlur", imgBlur)
-    #cv2.imshow("ImageThresh", imgThreshold)
-    #cv2.imshow("ImageMed", imgMedian)
-    #cv2.imshow("imgDilate", imgDilate)
-    if cv2.waitKey(15) & 0xFF == ord('d'):
+    # Display multiple views
+    cv2.imshow("Original", original_img)
+    cv2.imshow("Grayscale", imgGray)
+    cv2.imshow("Threshold", imgThreshold)
+    
+    # Resize the main processed image for better visibility
+    img_resized = cv2.resize(img, (800, 600))
+    cv2.imshow("Processed Image", img_resized)
+    
+    key = cv2.waitKey(15)
+    if key & 0xFF == ord('d'):
         print("Empty are :", counter, "Total=", len(counter))
         break
+    elif key & 0xFF == ord('q'):
+        break
+
+# Clean up
+cap.release()
+cv2.destroyAllWindows()
         
